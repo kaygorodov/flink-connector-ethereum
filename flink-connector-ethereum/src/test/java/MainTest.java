@@ -1,16 +1,24 @@
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.http.HttpService;
+import org.kaigorodov.flink.connector.ethereum.EthereumBlockSource;
+import org.slf4j.LoggerFactory;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.math.BigInteger;
 
 class MainTest {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MainTest.class);
     final String URL = "";
 
     @Test
-    public void testMain() {
-        Web3j client = Web3j.build( new HttpService(URL));
-    }
+    public void testMain() throws Exception {
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
 
+        var source = new EthereumBlockSource("http://localhost:1234", new BigInteger("123123123"));
+        env.fromSource(source, WatermarkStrategy.noWatermarks(), "test")
+                .print();
+        env.execute();
+    }
 }
