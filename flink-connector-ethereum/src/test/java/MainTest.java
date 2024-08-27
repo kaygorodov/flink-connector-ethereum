@@ -16,13 +16,15 @@ class MainTest {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
 
-        var source = new EthereumBlockSource("http://localhost:1234", BigInteger.ONE);
+        var source = new EthereumBlockSource("http://localhost:1234", BigInteger.valueOf(
+            20622000
+        ));
         var res = env.fromSource(source, WatermarkStrategy.noWatermarks(), "test")
 //            .map(block -> {
 //                System.out.println(block);
 //                return block;
 //            })
-            .executeAndCollect(300);
+            .executeAndCollect(20);
         System.out.println("******* RESULT ********");
         System.out.println(res);
     }

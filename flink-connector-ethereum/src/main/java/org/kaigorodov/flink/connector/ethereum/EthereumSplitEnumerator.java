@@ -48,11 +48,11 @@ public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRan
         logger.info("Subtask {} requested a new split", subtaskId);
 
         if(lastAssignedBlockNumber != null &&
-            initialBlockNumber.add(BigInteger.valueOf(10000)).compareTo(lastAssignedBlockNumber) < 0) {
+            initialBlockNumber.add(BigInteger.valueOf(40)).compareTo(lastAssignedBlockNumber) < 0) {
             return;
         }
 
-        BigInteger batchSize = BigInteger.valueOf(100);
+        BigInteger batchSize = BigInteger.valueOf(5);
 
         if (lastAssignedBlockNumber == null) {
             lastAssignedBlockNumber = initialBlockNumber.subtract(BigInteger.ONE);

@@ -1,28 +1,28 @@
 package org.kaigorodov.flink.connector.ethereum;
 
-import java.math.BigInteger;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import javax.annotation.Nullable;
 import org.apache.flink.api.connector.source.SourceReaderContext;
 import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.splitreader.SplitReader;
 import org.apache.flink.connector.base.source.reader.splitreader.SplitsAddition;
 import org.apache.flink.connector.base.source.reader.splitreader.SplitsChange;
-
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import org.slf4j.LoggerFactory;
 
 
 public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockWithCheckInfo, EthereumBlockRangeSplit> {
 
     final private SourceReaderContext readerContext;
+    final private EthNetworkClient ethNetworkClient;
 
     public EthereumBlockRangeSplitReader(SourceReaderContext readerContext) {
+        this.ethNetworkClient = new EthNetworkClient();
         this.readerContext = readerContext;
     }
 
@@ -31,26 +31,23 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
     private Deque<EthereumBlockRangeSplit> splitsToProcess = new ArrayDeque<>();
 
     private static class EthereumBlocksWithRangeSplits implements RecordsWithSplitIds<EthereumBlockWithCheckInfo> {
-        private EthereumBlockRangeSplit split;
-        private Set<String> finishedSplits = new HashSet<>();
-        private List<BigInteger> blockIds;
-        private Iterator<BigInteger> blockIdIterator;
+        private String splitId;
+        private List<EthBlock> ethBlocks;
+        private Iterator<EthBlock> ethBlockIterator;
+        private Set<String> finishedSplits;
 
-        public EthereumBlocksWithRangeSplits(EthereumBlockRangeSplit split) {
-            this.split = split;
-            if (split == null) {
-                this.blockIds = List.of();
-            } else {
-                this.blockIds = split.getBlockIds();
-            }
-            this.blockIdIterator = blockIds.iterator();
+        public EthereumBlocksWithRangeSplits(List<EthBlock> ethBlocks, String splitId) {
+            this.splitId = splitId;
+            this.ethBlocks = ethBlocks;
+            this.ethBlockIterator = ethBlocks.iterator();
+            this.finishedSplits = new HashSet<>();
         }
 
         @Nullable
         @Override
         public String nextSplit() {
-            if (blockIdIterator.hasNext()) {
-                return split.splitId();
+            if (ethBlockIterator.hasNext()) {
+                return splitId;
             } else {
                 return null;
             }
@@ -59,12 +56,12 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
         @Nullable
         @Override
         public EthereumBlockWithCheckInfo nextRecordFromSplit() {
-            if (blockIdIterator.hasNext()) {
+            if (ethBlockIterator.hasNext()) {
                 return new EthereumBlockWithCheckInfo(
-                    new EthBlock(blockIdIterator.next().longValue())
+                    ethBlockIterator.next()
                 );
             } else {
-                finishedSplits.add(split.splitId());
+                finishedSplits.add(this.splitId);
                 return null;
             }
         }
@@ -74,7 +71,6 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
             return finishedSplits;
         }
     }
-
 
     boolean askedForSplit = false;
 
@@ -86,10 +82,16 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
                 readerContext.sendSplitRequest();
                 askedForSplit = true;
             }
-            return new EthereumBlocksWithRangeSplits(null);
+            return new EthereumBlocksWithRangeSplits(List.of(), null);
         } else {
             askedForSplit = false;
-            return new EthereumBlocksWithRangeSplits(splitsToProcess.removeFirst());
+
+            var split = splitsToProcess.removeFirst();
+            var ethBlocks = split.getBlockIds().stream().map(
+                ethNetworkClient::getBlockByNumber
+            ).toList();
+
+            return new EthereumBlocksWithRangeSplits(ethBlocks, split.splitId());
         }
     }
 
@@ -107,7 +109,6 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
 
     @Override
     public void wakeUp() {
-//        sr.notifyToWakeUp();
     }
 
     @Override

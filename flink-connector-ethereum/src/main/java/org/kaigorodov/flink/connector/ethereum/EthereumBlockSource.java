@@ -48,7 +48,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
 
     @Override
     public SimpleVersionedSerializer<EthereumBlockRangeSplit> getSplitSerializer() {
-        return new EthereumBlockRangeSerializer();
+        return new EthereumBlockRangeSplitSerializer();
     }
 
     @Override

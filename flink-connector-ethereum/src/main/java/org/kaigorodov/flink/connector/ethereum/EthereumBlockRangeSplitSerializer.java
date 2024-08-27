@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
  * Version 0 - A simplified implementation via serialized Strings, to be improved and optimized (logic for version 0
  * should stay for backward compatibility)
  */
-public class EthereumBlockRangeSerializer implements SimpleVersionedSerializer<EthereumBlockRangeSplit> {
+public class EthereumBlockRangeSplitSerializer implements SimpleVersionedSerializer<EthereumBlockRangeSplit> {
     @Override
     public int getVersion() {
         return 0;
