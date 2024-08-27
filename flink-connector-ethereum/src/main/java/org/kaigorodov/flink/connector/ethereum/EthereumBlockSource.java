@@ -23,7 +23,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
     private BigInteger initialBlockNumber;
 
     public EthereumBlockSource(String ethNodeUrl, BigInteger initialBlockNumber) {
-        logger.info("Init source");
+        logger.info("Init source with ethNodeUrl {} and initial block number {}", ethNodeUrl, initialBlockNumber);
         this.ethNodeUrl = ethNodeUrl;
         this.initialBlockNumber = initialBlockNumber;
     }
@@ -35,7 +35,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
 
     @Override
     public SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> createEnumerator(SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext) throws Exception {
-        return new EthereumSourceEnumerator(enumContext, initialBlockNumber, ethNodeUrl);
+        return new EthereumSplitEnumerator(enumContext, initialBlockNumber, ethNodeUrl);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
         SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext,
         EthereumEnumeratorState checkpoint) throws Exception {
 
-        return new EthereumSourceEnumerator(enumContext, initialBlockNumber, ethNodeUrl);
+        return new EthereumSplitEnumerator(enumContext, initialBlockNumber, ethNodeUrl);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
         FutureCompletingBlockingQueue<RecordsWithSplitIds<EthereumBlockWithCheckInfo>>
             elementsQueue = new FutureCompletingBlockingQueue<>();
 
-        Supplier<EthereumBlockRangeSplitReader> splitReaderSupplier = EthereumBlockRangeSplitReader::new;
+        Supplier<EthereumBlockRangeSplitReader> splitReaderSupplier = () -> new EthereumBlockRangeSplitReader(readerContext);
 
         EthereumSplitFetcherManager ethereumSplitFetcherManager = new EthereumSplitFetcherManager(
             elementsQueue,

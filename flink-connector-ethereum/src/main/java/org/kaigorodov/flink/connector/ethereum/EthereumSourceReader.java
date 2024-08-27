@@ -1,18 +1,16 @@
 package org.kaigorodov.flink.connector.ethereum;
 
+import java.util.Map;
 import org.apache.flink.api.connector.source.SourceReaderContext;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.connector.base.source.reader.RecordEmitter;
 import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
-import org.apache.flink.connector.base.source.reader.SingleThreadMultiplexSourceReaderBase;
+import org.apache.flink.connector.base.source.reader.SourceReaderBase;
 import org.apache.flink.connector.base.source.reader.fetcher.SingleThreadFetcherManager;
-import org.apache.flink.connector.base.source.reader.splitreader.SplitReader;
 import org.apache.flink.connector.base.source.reader.synchronization.FutureCompletingBlockingQueue;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
-public class EthereumSourceReader extends SingleThreadMultiplexSourceReaderBase<EthereumBlockWithCheckInfo, EthBlock, EthereumBlockRangeSplit, EthereumBlockRangeSplitState> {
+public class EthereumSourceReader extends
+    SourceReaderBase<EthereumBlockWithCheckInfo, EthBlock, EthereumBlockRangeSplit, EthereumBlockRangeSplitState> {
 
 
     public EthereumSourceReader(

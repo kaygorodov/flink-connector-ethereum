@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
  */
 public class EthereumBlockRangeSplit implements SourceSplit {
 
+    public List<BigInteger> getBlockIds() {
+        return blockIds;
+    }
+
     private final List<BigInteger> blockIds;
 
     public EthereumBlockRangeSplit(List<BigInteger> blockIds) {
@@ -25,5 +29,12 @@ public class EthereumBlockRangeSplit implements SourceSplit {
     @Override
     public String splitId() {
         return blockIds.stream().map(BigInteger::toString).collect(Collectors.joining(","));
+    }
+
+    @Override
+    public String toString() {
+        return "EthereumBlockRangeSplit{" +
+            "blockIds=" + blockIds +
+            '}';
     }
 }

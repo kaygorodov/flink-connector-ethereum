@@ -1,5 +1,6 @@
 package org.kaigorodov.flink.connector.ethereum;
 
+import java.util.stream.Stream;
 import org.apache.flink.api.connector.source.SplitEnumerator;
 import org.apache.flink.api.connector.source.SplitEnumeratorContext;
 import org.slf4j.Logger;
@@ -10,8 +11,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
-public class EthereumSourceEnumerator implements SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> {
-    private static final Logger logger = LoggerFactory.getLogger(EthereumSourceEnumerator.class);
+public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> {
+    private static final Logger logger = LoggerFactory.getLogger(EthereumSplitEnumerator.class);
 
     private String ethNodeUrl;
     private BigInteger initialBlockNumber;
@@ -19,7 +20,7 @@ public class EthereumSourceEnumerator implements SplitEnumerator<EthereumBlockRa
     private SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext;
 
 
-    public EthereumSourceEnumerator(SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext,
+    public EthereumSplitEnumerator(SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext,
                                     BigInteger initialBlockNumber, String ethNodeUrl) {
         this.enumContext = enumContext;
         this.initialBlockNumber = initialBlockNumber;
@@ -46,13 +47,22 @@ public class EthereumSourceEnumerator implements SplitEnumerator<EthereumBlockRa
     public void handleSplitRequest(int subtaskId, @Nullable String requesterHostname) {
         logger.info("Subtask {} requested a new split", subtaskId);
 
-        if (lastAssignedBlockNumber == null) {
-            lastAssignedBlockNumber = initialBlockNumber;
-        } else {
-            lastAssignedBlockNumber = lastAssignedBlockNumber.add(BigInteger.ONE);
+        if(lastAssignedBlockNumber != null &&
+            initialBlockNumber.add(BigInteger.valueOf(10000)).compareTo(lastAssignedBlockNumber) < 0) {
+            return;
         }
 
-        this.enumContext.assignSplit(new EthereumBlockRangeSplit(List.of(lastAssignedBlockNumber)), subtaskId);
+        BigInteger batchSize = BigInteger.valueOf(100);
+
+        if (lastAssignedBlockNumber == null) {
+            lastAssignedBlockNumber = initialBlockNumber.subtract(BigInteger.ONE);
+        }
+
+        this.enumContext.assignSplit(new EthereumBlockRangeSplit(
+            Stream.iterate(lastAssignedBlockNumber.add(BigInteger.ONE), n -> n.add(BigInteger.ONE)).limit(batchSize.longValue()).toList()
+        ), subtaskId);
+
+        lastAssignedBlockNumber = lastAssignedBlockNumber.add(batchSize);
 
     }
 
