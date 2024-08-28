@@ -13,6 +13,7 @@ import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.splitreader.SplitReader;
 import org.apache.flink.connector.base.source.reader.splitreader.SplitsAddition;
 import org.apache.flink.connector.base.source.reader.splitreader.SplitsChange;
+import org.kaigorodov.flink.connector.ethereum.model.EthBlock;
 import org.slf4j.LoggerFactory;
 
 
@@ -21,8 +22,8 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
     final private SourceReaderContext readerContext;
     final private EthNetworkClient ethNetworkClient;
 
-    public EthereumBlockRangeSplitReader(SourceReaderContext readerContext) {
-        this.ethNetworkClient = new EthNetworkClient();
+    public EthereumBlockRangeSplitReader(SourceReaderContext readerContext, String url) {
+        this.ethNetworkClient = new EthNetworkClient(url);
         this.readerContext = readerContext;
     }
 

@@ -1,5 +1,7 @@
 package org.kaigorodov.flink.connector.ethereum;
 
+import org.kaigorodov.flink.connector.ethereum.model.EthBlock;
+
 public class EthereumBlockWithCheckInfo {
   private EthBlock ethBlock;
 

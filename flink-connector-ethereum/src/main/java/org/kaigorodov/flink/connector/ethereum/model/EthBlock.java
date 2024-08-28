@@ -1,8 +1,13 @@
-package org.kaigorodov.flink.connector.ethereum;
+package org.kaigorodov.flink.connector.ethereum.model;
 
 
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Objects;
+import org.apache.flink.api.common.typeinfo.TypeInfo;
+import org.kaigorodov.flink.connector.ethereum.serialization.ListTypeInfoFactory;
 import org.web3j.protocol.core.methods.response.EthBlock.Block;
+import org.web3j.protocol.core.methods.response.Transaction;
 
 public class EthBlock {
   private BigInteger number;
@@ -32,6 +37,8 @@ public class EthBlock {
   private BigInteger blobGasUsed;
   private BigInteger excessBlobGas;
 
+  @TypeInfo(ListTypeInfoFactory.class)
+  private List<EthTransaction> transactions;
 
   public EthBlock() {
   }
@@ -57,6 +64,11 @@ public class EthBlock {
     this.gasLimit = rawBlock.getGasLimit();
     this.gasUsed = rawBlock.getGasUsed();
     this.timestamp = rawBlock.getTimestamp();
+    this.transactions = rawBlock.getTransactions().stream()
+            .map(transaction ->
+              new EthTransaction((Transaction) transaction.get())
+            ).toList();
+
 //    this.uncles = rawBlock.getUncles();
 //    this.sealFields = rawBlock.getSealFields();
     this.baseFeePerGas = rawBlock.getBaseFeePerGas();
@@ -300,6 +312,33 @@ public class EthBlock {
         "  withdrawalsRoot='" + withdrawalsRoot + '\'' + ",\n" +
         "  blobGasUsed=" + blobGasUsed + ",\n" +
         "  excessBlobGas=" + excessBlobGas + "\n" +
+        "  transactions=" + transactions + "\n" +
         '}';
+  }
+
+  public List<EthTransaction> getTransactions() {
+    return transactions;
+  }
+
+  public void setTransactions(List<EthTransaction> transactions) {
+    this.transactions = transactions;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    EthBlock ethBlock = (EthBlock) o;
+    return Objects.equals(number, ethBlock.number) && Objects.equals(hash,
+        ethBlock.hash);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(number, hash);
   }
 }

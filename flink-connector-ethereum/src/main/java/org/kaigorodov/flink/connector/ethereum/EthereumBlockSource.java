@@ -11,6 +11,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.synchronization.FutureCompletingBlockingQueue;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
+import org.kaigorodov.flink.connector.ethereum.model.EthBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
         FutureCompletingBlockingQueue<RecordsWithSplitIds<EthereumBlockWithCheckInfo>>
             elementsQueue = new FutureCompletingBlockingQueue<>();
 
-        Supplier<EthereumBlockRangeSplitReader> splitReaderSupplier = () -> new EthereumBlockRangeSplitReader(readerContext);
+        Supplier<EthereumBlockRangeSplitReader> splitReaderSupplier = () -> new EthereumBlockRangeSplitReader(readerContext, ethNodeUrl);
 
         EthereumSplitFetcherManager ethereumSplitFetcherManager = new EthereumSplitFetcherManager(
             elementsQueue,

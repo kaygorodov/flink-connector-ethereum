@@ -8,6 +8,7 @@ import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.SourceReaderBase;
 import org.apache.flink.connector.base.source.reader.fetcher.SingleThreadFetcherManager;
 import org.apache.flink.connector.base.source.reader.synchronization.FutureCompletingBlockingQueue;
+import org.kaigorodov.flink.connector.ethereum.model.EthBlock;
 
 public class EthereumSourceReader extends
     SourceReaderBase<EthereumBlockWithCheckInfo, EthBlock, EthereumBlockRangeSplit, EthereumBlockRangeSplitState> {
