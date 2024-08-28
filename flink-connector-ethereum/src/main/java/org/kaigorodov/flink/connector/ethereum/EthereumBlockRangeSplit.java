@@ -22,6 +22,10 @@ public class EthereumBlockRangeSplit implements SourceSplit {
         this.blockIds = blockIds;
     }
 
+    public EthereumBlockRangeSplit(BigInteger blockId) {
+        this(List.of(blockId));
+    }
+
     public EthereumBlockRangeSplit(String splitId) {
         this(Arrays.stream(splitId.split(",")).map(BigInteger::new).collect(Collectors.toList()));
     }

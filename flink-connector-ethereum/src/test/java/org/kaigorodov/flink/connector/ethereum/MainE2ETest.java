@@ -1,9 +1,10 @@
+package org.kaigorodov.flink.connector.ethereum;
+
 import java.math.BigInteger;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.kaigorodov.flink.connector.ethereum.EthereumBlockSource;
 
 class MainE2ETest {
     /*

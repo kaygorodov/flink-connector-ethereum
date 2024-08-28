@@ -1,6 +1,5 @@
 package org.kaigorodov.flink.connector.ethereum;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
@@ -18,28 +17,32 @@ import org.slf4j.LoggerFactory;
 
 
 public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockWithCheckInfo, EthereumBlockRangeSplit> {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(EthereumBlockRangeSplitReader.class);
+    private final static RecordsWithSplitIds<EthereumBlockWithCheckInfo> EMPTY_RECORDS_WITH_SPLIT_IDS = new EthereumBlocksWithRangeSplits(List.of(), null);
 
-    final private SourceReaderContext readerContext;
-    final private EthNetworkClient ethNetworkClient;
+    private final SourceReaderContext readerContext;
+    private final EthNetworkClient ethNetworkClient;
 
-    public EthereumBlockRangeSplitReader(SourceReaderContext readerContext, String url) {
-        this.ethNetworkClient = new EthNetworkClient(url);
+    private boolean askedForSplit = false;
+
+    public EthereumBlockRangeSplitReader(SourceReaderContext readerContext, EthNetworkClient ethNetworkClient) {
+        this.ethNetworkClient = ethNetworkClient;
         this.readerContext = readerContext;
     }
 
-    public static final org.slf4j.Logger logger = LoggerFactory.getLogger(EthereumBlockRangeSplitReader.class);
+    public EthereumBlockRangeSplitReader(SourceReaderContext readerContext, String url) {
+        this(readerContext, new EthNetworkClient(url));
+    }
 
-    private Deque<EthereumBlockRangeSplit> splitsToProcess = new ArrayDeque<>();
+    private final Deque<EthereumBlockRangeSplit> splitsToProcess = new ArrayDeque<>();
 
     private static class EthereumBlocksWithRangeSplits implements RecordsWithSplitIds<EthereumBlockWithCheckInfo> {
-        private String splitId;
-        private List<EthBlock> ethBlocks;
-        private Iterator<EthBlock> ethBlockIterator;
-        private Set<String> finishedSplits;
+        private final String splitId;
+        private final Iterator<EthBlock> ethBlockIterator;
+        private final Set<String> finishedSplits;
 
         public EthereumBlocksWithRangeSplits(List<EthBlock> ethBlocks, String splitId) {
             this.splitId = splitId;
-            this.ethBlocks = ethBlocks;
             this.ethBlockIterator = ethBlocks.iterator();
             this.finishedSplits = new HashSet<>();
         }
@@ -58,11 +61,16 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
         @Override
         public EthereumBlockWithCheckInfo nextRecordFromSplit() {
             if (ethBlockIterator.hasNext()) {
-                return new EthereumBlockWithCheckInfo(
+                var block = new EthereumBlockWithCheckInfo(
                     ethBlockIterator.next()
                 );
+
+                if (!ethBlockIterator.hasNext()) { // eagerly checking here, if true, it means we just finished the split
+                    finishedSplits.add(this.splitId);
+                }
+
+                return block;
             } else {
-                finishedSplits.add(this.splitId);
                 return null;
             }
         }
@@ -73,17 +81,14 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
         }
     }
 
-    boolean askedForSplit = false;
-
-
     @Override
-    public RecordsWithSplitIds<EthereumBlockWithCheckInfo> fetch() throws IOException {
+    public RecordsWithSplitIds<EthereumBlockWithCheckInfo> fetch() {
       if(splitsToProcess.isEmpty()) {
             if (!askedForSplit) {
                 readerContext.sendSplitRequest();
                 askedForSplit = true;
             }
-            return new EthereumBlocksWithRangeSplits(List.of(), null);
+            return EMPTY_RECORDS_WITH_SPLIT_IDS;
         } else {
             askedForSplit = false;
 
@@ -98,13 +103,14 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
 
     @Override
     public void handleSplitsChanges(SplitsChange<EthereumBlockRangeSplit> splitsChanges) {
-
-        logger.info("Split changes: " + splitsChanges.toString());
+      logger.info("Received SplitChange: {}", splitsChanges.toString());
 
         if(splitsChanges instanceof SplitsAddition<EthereumBlockRangeSplit> splitsAddition) {
             for(EthereumBlockRangeSplit split: splitsAddition.splits()) {
                 splitsToProcess.addLast(split);
             }
+        } else {
+            logger.info("Only handles addition SplitChanges");
         }
     }
 
