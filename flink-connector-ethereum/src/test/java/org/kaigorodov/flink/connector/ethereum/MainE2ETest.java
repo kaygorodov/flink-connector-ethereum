@@ -38,14 +38,17 @@ class MainE2ETest {
         if(mainnetNodeUrl == null) {
             throw new RuntimeException("ETH_MAINNET_NODE_URL env variable is not defined");
         }
+
+        var startFromBlock = BigInteger.valueOf(20622000);
         var source = new EthereumBlockSource(
             mainnetNodeUrl,
-            BigInteger.valueOf(20622000),
+            startFromBlock,
             RateLimiterStrategy.perSecond(0.5)
         );
-        var res = env.fromSource(source, WatermarkStrategy.noWatermarks(), "test")
-            .executeAndCollect(20);
-        System.out.println("******* RESULT ********");
-        System.out.println(res);
+        env
+            .fromSource(source, WatermarkStrategy.noWatermarks(), "test")
+            .print();
+
+        env.execute();
     }
 }
