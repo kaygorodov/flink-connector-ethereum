@@ -8,11 +8,7 @@ The current version of the connector is built using Flink 1.20 and JDK 17
 
 # Usage
 
-```
-if(mainnetNodeUrl == null) {
-    throw new RuntimeException("ETH_MAINNET_NODE_URL env variable is not defined");
-}
-
+```java
 var startFromBlock = BigInteger.valueOf(20622000);
 var source = new EthereumBlockSource(
     "https://eth_network_node_url",
@@ -20,18 +16,17 @@ var source = new EthereumBlockSource(
     RateLimiterStrategy.perSecond(0.5)
 );
 env
-    .fromSource(source, WatermarkStrategy.noWatermarks(), "test")
+    .fromSource(source, WatermarkStrategy.noWatermarks(), "My Eth Source")
     .print();
 
 env.execute();
-
 ```
 
 # Contribute
 
 Feel free to raise a GitHub issue, or to fork and open a pull request.
 
-Do you have an idea or suggestion with how to improve the project? Please write to andreykaygorodov@gmail.com
+Do you have an idea or suggestion on how to improve the project? Please write to andreykaygorodov@gmail.com
 
 # License
 
