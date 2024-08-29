@@ -7,6 +7,9 @@ import org.apache.flink.api.connector.source.SourceReaderContext;
 import org.apache.flink.api.connector.source.SplitEnumerator;
 import org.apache.flink.api.connector.source.SplitEnumeratorContext;
 
+import org.apache.flink.api.connector.source.util.ratelimit.RateLimitedSourceReader;
+import org.apache.flink.api.connector.source.util.ratelimit.RateLimiter;
+import org.apache.flink.api.connector.source.util.ratelimit.RateLimiterStrategy;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.synchronization.FutureCompletingBlockingQueue;
@@ -20,13 +23,15 @@ import java.util.function.Supplier;
 
 public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeSplit, EthereumEnumeratorState> {
     private static final Logger logger = LoggerFactory.getLogger(EthereumBlockSource.class);
-    private String ethNodeUrl;
-    private BigInteger initialBlockNumber;
+    private final String ethNodeUrl;
+    private final BigInteger initialBlockNumber;
+    private final RateLimiterStrategy rateLimiterStrategy;
 
-    public EthereumBlockSource(String ethNodeUrl, BigInteger initialBlockNumber) {
+    public EthereumBlockSource(String ethNodeUrl, BigInteger initialBlockNumber, RateLimiterStrategy rateLimiterStrategy) {
         logger.info("Init source with ethNodeUrl {} and initial block number {}", ethNodeUrl, initialBlockNumber);
         this.ethNodeUrl = ethNodeUrl;
         this.initialBlockNumber = initialBlockNumber;
+        this.rateLimiterStrategy = rateLimiterStrategy;
     }
 
     @Override
@@ -73,6 +78,10 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
 
         EthereumBlockEmitter emitter = new EthereumBlockEmitter();
 
-        return new EthereumSourceReader(elementsQueue, ethereumSplitFetcherManager, emitter, new Configuration(), readerContext);
+        int parallelism = readerContext.currentParallelism();
+        RateLimiter rateLimiter = rateLimiterStrategy.createRateLimiter(parallelism);
+        return new RateLimitedSourceReader<>(
+            new EthereumSourceReader(elementsQueue, ethereumSplitFetcherManager, emitter, new Configuration(), readerContext),
+            rateLimiter);
     }
 }

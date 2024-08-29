@@ -15,11 +15,6 @@ public class EthNetworkClient {
   }
 
   public EthBlock getBlockByNumber(BigInteger blockNumber) {
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
     final boolean returnFullTransactionObjects = true;
     try {
       var blockResponse = web3.ethGetBlockByNumber(DefaultBlockParameter.valueOf(blockNumber),
