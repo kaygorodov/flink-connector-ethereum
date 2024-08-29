@@ -21,25 +21,19 @@ public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRan
 
 
     public EthereumSplitEnumerator(SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext,
-                                    BigInteger initialBlockNumber, String ethNodeUrl) {
+                                    BigInteger initialBlockNumber, String ethNodeUrl, EthereumEnumeratorState checkpoint) {
         this.enumContext = enumContext;
         this.initialBlockNumber = initialBlockNumber;
+        if (checkpoint != null) {
+            logger.info("Recovering EthereumSplitEnumerator from state {}", checkpoint);
+            this.lastAssignedBlockNumber = checkpoint.getLastAssignedBlockNumber();
+        }
         this.ethNodeUrl = ethNodeUrl;
     }
 
     @Override
     public void start() {
         logger.info("Starting EthereumSourceEnumerator using Node URL: {}", ethNodeUrl);
-//        if (initialBlockNumber == null) {
-//            logger.info("Initial Block Number is not set. Fetching the latest number from the network");
-//            try {
-//                initialBlockNumber = web3jClient.ethBlockNumber().send().getBlockNumber();
-//
-////                EthBlock.Block block = web3jClient.ethGetBlockByNumber().send().getBlock();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
         logger.info("Initial Block Number is {}", initialBlockNumber);
     }
 
@@ -80,7 +74,7 @@ public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRan
 
     @Override
     public EthereumEnumeratorState snapshotState(long checkpointId) throws Exception {
-        return null;
+        return new EthereumEnumeratorState(lastAssignedBlockNumber);
     }
 
     @Override

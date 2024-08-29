@@ -36,7 +36,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
 
     @Override
     public SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> createEnumerator(SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext) throws Exception {
-        return new EthereumSplitEnumerator(enumContext, initialBlockNumber, ethNodeUrl);
+        return new EthereumSplitEnumerator(enumContext, initialBlockNumber, ethNodeUrl, null);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
         SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext,
         EthereumEnumeratorState checkpoint) throws Exception {
 
-        return new EthereumSplitEnumerator(enumContext, initialBlockNumber, ethNodeUrl);
+        return new EthereumSplitEnumerator(enumContext, initialBlockNumber, ethNodeUrl, checkpoint);
     }
 
     @Override
