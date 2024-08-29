@@ -10,5 +10,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Check License Headers
+        run: mvn license:check
       - name: Compile & Run Tests
         run: mvn verify
