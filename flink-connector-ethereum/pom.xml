@@ -25,7 +25,7 @@
     <parent>
         <groupId>io.github.kaygorodov</groupId>
         <artifactId>flink-connector-ethereum-parent</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>flink-connector-ethereum</artifactId>
