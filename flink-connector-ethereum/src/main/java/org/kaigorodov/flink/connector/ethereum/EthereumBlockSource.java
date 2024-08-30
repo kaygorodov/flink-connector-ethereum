@@ -49,6 +49,10 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
         this.rateLimiterStrategy = rateLimiterStrategy;
     }
 
+    public static EthereumBlockSourceBuilder builder() {
+        return new EthereumBlockSourceBuilder();
+    }
+
     @Override
     public Boundedness getBoundedness() {
         return Boundedness.CONTINUOUS_UNBOUNDED;

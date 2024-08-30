@@ -29,11 +29,13 @@ import java.util.List;
 public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> {
     private static final Logger logger = LoggerFactory.getLogger(EthereumSplitEnumerator.class);
 
-    private String ethNodeUrl;
-    private BigInteger initialBlockNumber;
+    private final String ethNodeUrl;
+    private final BigInteger initialBlockNumber;
     private BigInteger lastAssignedBlockNumber;
-    private SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext;
-
+    private final SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext;
+    private final BigInteger DEFAULT_BATCH_SIZE = BigInteger.valueOf(5);
+    private final EthNetworkClient ethNetworkClient;
+    private BigInteger latestBlockNumber;
 
     public EthereumSplitEnumerator(SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext,
                                     BigInteger initialBlockNumber, String ethNodeUrl, EthereumEnumeratorState checkpoint) {
@@ -44,6 +46,8 @@ public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRan
             this.lastAssignedBlockNumber = checkpoint.getLastAssignedBlockNumber();
         }
         this.ethNodeUrl = ethNodeUrl;
+        this.ethNetworkClient = new EthNetworkClient(ethNodeUrl);
+        latestBlockNumber = this.ethNetworkClient.getLatestBlockNumber();
     }
 
     @Override
@@ -56,23 +60,25 @@ public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRan
     public void handleSplitRequest(int subtaskId, @Nullable String requesterHostname) {
         logger.info("Subtask {} requested a new split", subtaskId);
 
-        if(lastAssignedBlockNumber != null &&
-            initialBlockNumber.add(BigInteger.valueOf(40)).compareTo(lastAssignedBlockNumber) < 0) {
-            return;
-        }
-
-        BigInteger batchSize = BigInteger.valueOf(5);
-
         if (lastAssignedBlockNumber == null) {
             lastAssignedBlockNumber = initialBlockNumber.subtract(BigInteger.ONE);
         }
 
+        BigInteger batchSize = DEFAULT_BATCH_SIZE.min(latestBlockNumber.subtract(lastAssignedBlockNumber));
+
+        if (batchSize.compareTo(BigInteger.ZERO) <= 0) {
+            logger.info("Reached the latest block. Do nothing for now");
+            return;
+        }
+
+        logger.info("Assigning batch size {}", batchSize);
+
         this.enumContext.assignSplit(new EthereumBlockRangeSplit(
-            Stream.iterate(lastAssignedBlockNumber.add(BigInteger.ONE), n -> n.add(BigInteger.ONE)).limit(batchSize.longValue()).toList()
+            Stream.iterate(lastAssignedBlockNumber.add(BigInteger.ONE), n -> n.add(BigInteger.ONE)).limit(
+                batchSize.longValue()).toList()
         ), subtaskId);
 
         lastAssignedBlockNumber = lastAssignedBlockNumber.add(batchSize);
-
     }
 
     @Override

@@ -26,7 +26,7 @@ class MainE2ETest {
     /*
      * E2E Tests that works against the real eth mainnet API
      *
-     * Disabled by default, expect a configured node url via ETH_MAINNET_NODE_URL environment variable
+     * Disabled by default, expects a configured node url via ETH_MAINNET_NODE_URL environment variable
      */
     @Disabled
     @Test
@@ -39,12 +39,14 @@ class MainE2ETest {
             throw new RuntimeException("ETH_MAINNET_NODE_URL env variable is not defined");
         }
 
-        var startFromBlock = BigInteger.valueOf(20622000);
-        var source = new EthereumBlockSource(
-            mainnetNodeUrl,
-            startFromBlock,
-            RateLimiterStrategy.perSecond(0.5)
-        );
+        var startFromBlock = BigInteger.valueOf(20640708);
+
+        var source = EthereumBlockSource.builder()
+            .setEthNodeUrl(mainnetNodeUrl)
+            .setInitialBlockNumber(startFromBlock)
+            .setRateLimiterStrategy(RateLimiterStrategy.perSecond(1))
+            .build();
+
         env
             .fromSource(source, WatermarkStrategy.noWatermarks(), "test")
             .print();

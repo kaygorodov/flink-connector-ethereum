@@ -10,11 +10,11 @@ The current version of the connector is built using Flink 1.20 and JDK 17
 
 ```java
 var startFromBlock = BigInteger.valueOf(20622000);
-var source = new EthereumBlockSource(
-    "https://eth_network_node_url",
-    startFromBlock,
-    RateLimiterStrategy.perSecond(0.5)
-);
+var source = EthereumBlockSource.builder()
+    .setEthNodeUrl(mainnetNodeUrl)
+    .setInitialBlockNumber(startFromBlock)
+    .setRateLimiterStrategy(RateLimiterStrategy.perSecond(1))
+    .build();
 env
     .fromSource(source, WatermarkStrategy.noWatermarks(), "My Eth Source")
     .print();

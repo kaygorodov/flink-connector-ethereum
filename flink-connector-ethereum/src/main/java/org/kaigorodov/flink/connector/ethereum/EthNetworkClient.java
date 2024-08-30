@@ -29,6 +29,14 @@ public class EthNetworkClient {
     this.web3 = Web3j.build(new HttpService(URL));
   }
 
+  public BigInteger getLatestBlockNumber() {
+    try {
+      return web3.ethBlockNumber().send().getBlockNumber();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public EthBlock getBlockByNumber(BigInteger blockNumber) {
     final boolean returnFullTransactionObjects = true;
     try {
