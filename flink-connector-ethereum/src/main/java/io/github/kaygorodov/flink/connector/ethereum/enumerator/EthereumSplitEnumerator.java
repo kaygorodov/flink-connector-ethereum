@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.kaygorodov.flink.connector.ethereum;
+package io.github.kaygorodov.flink.connector.ethereum.enumerator;
 
+import io.github.kaygorodov.flink.connector.ethereum.client.EthNetworkClient;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplit;
 import java.util.stream.Stream;
+import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.connector.source.SplitEnumerator;
 import org.apache.flink.api.connector.source.SplitEnumeratorContext;
 import org.slf4j.Logger;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
+@Internal
 public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> {
     private static final Logger logger = LoggerFactory.getLogger(EthereumSplitEnumerator.class);
 

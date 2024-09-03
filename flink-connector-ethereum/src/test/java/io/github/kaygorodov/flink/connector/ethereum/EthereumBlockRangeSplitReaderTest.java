@@ -18,6 +18,9 @@ package io.github.kaygorodov.flink.connector.ethereum;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import io.github.kaygorodov.flink.connector.ethereum.client.EthNetworkClient;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplit;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplitReader;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;

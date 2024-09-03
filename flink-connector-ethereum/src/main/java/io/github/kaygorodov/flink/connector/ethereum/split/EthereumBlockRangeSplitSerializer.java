@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.kaygorodov.flink.connector.ethereum;
+package io.github.kaygorodov.flink.connector.ethereum.split;
 
+import org.apache.flink.annotation.Internal;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.nio.charset.StandardCharsets;
  * Version 0 - A simplified implementation via serialized Strings, to be improved and optimized (logic for version 0
  * should stay for backward compatibility)
  */
+@Internal
 public class EthereumBlockRangeSplitSerializer implements SimpleVersionedSerializer<EthereumBlockRangeSplit> {
     @Override
     public int getVersion() {

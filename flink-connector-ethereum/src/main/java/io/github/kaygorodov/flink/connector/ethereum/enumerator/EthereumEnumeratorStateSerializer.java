@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.kaygorodov.flink.connector.ethereum;
+package io.github.kaygorodov.flink.connector.ethereum.enumerator;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import org.apache.flink.annotation.Internal;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
 import org.apache.flink.core.io.VersionMismatchException;
 
+@Internal
 public class EthereumEnumeratorStateSerializer implements SimpleVersionedSerializer<EthereumEnumeratorState> {
     @Override
     public int getVersion() {

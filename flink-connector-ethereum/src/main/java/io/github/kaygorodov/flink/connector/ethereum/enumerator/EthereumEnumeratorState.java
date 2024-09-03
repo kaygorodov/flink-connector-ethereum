@@ -13,8 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.kaygorodov.flink.connector.ethereum;
+package io.github.kaygorodov.flink.connector.ethereum.enumerator;
 
-public class EthereumBlockRangeSplitState {
+import java.math.BigInteger;
+import org.apache.flink.annotation.Internal;
 
+@Internal
+public class EthereumEnumeratorState {
+  private final BigInteger lastAssignedBlockNumber;
+
+  public BigInteger getLastAssignedBlockNumber() {
+    return lastAssignedBlockNumber;
+  }
+
+  public EthereumEnumeratorState(BigInteger lastAssignedBlockNumber) {
+    this.lastAssignedBlockNumber = lastAssignedBlockNumber;
+  }
 }
