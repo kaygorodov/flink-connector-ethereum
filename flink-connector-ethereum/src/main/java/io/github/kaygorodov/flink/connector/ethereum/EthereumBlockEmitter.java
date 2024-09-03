@@ -15,6 +15,8 @@
  */
 package io.github.kaygorodov.flink.connector.ethereum;
 
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplitState;
+import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.connector.source.SourceOutput;
 import org.apache.flink.connector.base.source.reader.RecordEmitter;
 import io.github.kaygorodov.flink.connector.ethereum.model.EthBlock;
@@ -22,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+@Internal
 public class EthereumBlockEmitter implements RecordEmitter<EthereumBlockWithCheckInfo, EthBlock, EthereumBlockRangeSplitState> {
     private static final Logger logger = LoggerFactory.getLogger(EthereumBlockEmitter.class);
 

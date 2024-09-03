@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.kaygorodov.flink.connector.ethereum;
+package io.github.kaygorodov.flink.connector.ethereum.split;
 
+import io.github.kaygorodov.flink.connector.ethereum.client.EthNetworkClient;
+import io.github.kaygorodov.flink.connector.ethereum.EthereumBlockWithCheckInfo;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
+import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.connector.source.SourceReaderContext;
 import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.splitreader.SplitReader;
@@ -31,6 +34,7 @@ import io.github.kaygorodov.flink.connector.ethereum.model.EthBlock;
 import org.slf4j.LoggerFactory;
 
 
+@Internal
 public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockWithCheckInfo, EthereumBlockRangeSplit> {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(EthereumBlockRangeSplitReader.class);
     private final static RecordsWithSplitIds<EthereumBlockWithCheckInfo> EMPTY_RECORDS_WITH_SPLIT_IDS = new EthereumBlocksWithRangeSplits(List.of(), null);

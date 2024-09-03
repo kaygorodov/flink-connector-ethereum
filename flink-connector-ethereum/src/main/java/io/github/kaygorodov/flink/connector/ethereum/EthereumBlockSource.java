@@ -15,6 +15,12 @@
  */
 package io.github.kaygorodov.flink.connector.ethereum;
 
+import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumEnumeratorState;
+import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumEnumeratorStateSerializer;
+import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumSplitEnumerator;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplit;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplitReader;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplitSerializer;
 import org.apache.flink.api.connector.source.Boundedness;
 import org.apache.flink.api.connector.source.Source;
 import org.apache.flink.api.connector.source.SourceReader;

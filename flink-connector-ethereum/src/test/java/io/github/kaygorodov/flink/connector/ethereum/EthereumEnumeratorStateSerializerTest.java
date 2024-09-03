@@ -15,8 +15,8 @@
  */
 package io.github.kaygorodov.flink.connector.ethereum;
 
-import io.github.kaygorodov.flink.connector.ethereum.EthereumEnumeratorState;
-import io.github.kaygorodov.flink.connector.ethereum.EthereumEnumeratorStateSerializer;
+import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumEnumeratorState;
+import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumEnumeratorStateSerializer;
 import java.io.IOException;
 import java.math.BigInteger;
 import org.apache.flink.core.io.VersionMismatchException;

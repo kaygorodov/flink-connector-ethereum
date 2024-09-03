@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.kaygorodov.flink.connector.ethereum;
+package io.github.kaygorodov.flink.connector.ethereum.client;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import io.github.kaygorodov.flink.connector.ethereum.model.EthBlock;
+import org.apache.flink.annotation.Internal;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.http.HttpService;
 
+@Internal
 public class EthNetworkClient {
   final private Web3j web3;
 

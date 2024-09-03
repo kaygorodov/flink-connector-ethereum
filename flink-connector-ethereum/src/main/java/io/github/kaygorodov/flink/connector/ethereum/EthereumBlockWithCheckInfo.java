@@ -16,7 +16,9 @@
 package io.github.kaygorodov.flink.connector.ethereum;
 
 import io.github.kaygorodov.flink.connector.ethereum.model.EthBlock;
+import org.apache.flink.annotation.Internal;
 
+@Internal
 public class EthereumBlockWithCheckInfo {
   private EthBlock ethBlock;
 

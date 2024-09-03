@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.kaygorodov.flink.connector.ethereum;
+package io.github.kaygorodov.flink.connector.ethereum.split;
 
+import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.connector.source.SourceSplit;
 
 import java.math.BigInteger;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 /**
  * Defines a number of blocks that belong to a given Split.
  */
+@Internal
 public class EthereumBlockRangeSplit implements SourceSplit {
 
     public List<BigInteger> getBlockIds() {
