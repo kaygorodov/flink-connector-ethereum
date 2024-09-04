@@ -26,24 +26,24 @@ import java.nio.charset.StandardCharsets;
  * should stay for backward compatibility)
  */
 @Internal
-public class EthereumBlockRangeSplitSerializer implements SimpleVersionedSerializer<EthereumBlockRangeSplit> {
+public class EthereumBlockRangeSplitSerializer implements SimpleVersionedSerializer<EthereumBlockSplit> {
     @Override
     public int getVersion() {
         return 0;
     }
 
     @Override
-    public byte[] serialize(EthereumBlockRangeSplit obj) throws IOException {
+    public byte[] serialize(EthereumBlockSplit obj) throws IOException {
         return obj.splitId().getBytes(StandardCharsets.UTF_8);
     }
 
     @Override
-    public EthereumBlockRangeSplit deserialize(int version, byte[] serialized) throws IOException {
+    public EthereumBlockSplit deserialize(int version, byte[] serialized) throws IOException {
         if (version != 0) {
             throw new IllegalArgumentException(String.format("Unsupported version of the serialized object %d, only " +
                 "version 0 is supported", version));
         }
         String splitId = new String(serialized, StandardCharsets.UTF_8);
-        return new EthereumBlockRangeSplit(splitId);
+        return new EthereumBlockSplit(splitId);
     }
 }

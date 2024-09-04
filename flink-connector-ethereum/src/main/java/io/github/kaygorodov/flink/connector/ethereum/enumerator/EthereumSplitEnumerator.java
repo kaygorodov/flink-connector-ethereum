@@ -16,7 +16,7 @@
 package io.github.kaygorodov.flink.connector.ethereum.enumerator;
 
 import io.github.kaygorodov.flink.connector.ethereum.client.EthNetworkClient;
-import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplit;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockSplit;
 import java.util.stream.Stream;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.connector.source.SplitEnumerator;
@@ -30,18 +30,18 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Internal
-public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> {
+public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockSplit, EthereumEnumeratorState> {
     private static final Logger logger = LoggerFactory.getLogger(EthereumSplitEnumerator.class);
 
     private final String ethNodeUrl;
     private final BigInteger initialBlockNumber;
     private BigInteger lastAssignedBlockNumber;
-    private final SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext;
+    private final SplitEnumeratorContext<EthereumBlockSplit> enumContext;
     private final BigInteger DEFAULT_BATCH_SIZE = BigInteger.valueOf(5);
     private final EthNetworkClient ethNetworkClient;
     private BigInteger latestBlockNumber;
 
-    public EthereumSplitEnumerator(SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext,
+    public EthereumSplitEnumerator(SplitEnumeratorContext<EthereumBlockSplit> enumContext,
                                     BigInteger initialBlockNumber, String ethNodeUrl, EthereumEnumeratorState checkpoint) {
         this.enumContext = enumContext;
         this.initialBlockNumber = initialBlockNumber;
@@ -77,7 +77,7 @@ public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRan
 
         logger.info("Assigning batch size {}", batchSize);
 
-        this.enumContext.assignSplit(new EthereumBlockRangeSplit(
+        this.enumContext.assignSplit(new EthereumBlockSplit(
             Stream.iterate(lastAssignedBlockNumber.add(BigInteger.ONE), n -> n.add(BigInteger.ONE)).limit(
                 batchSize.longValue()).toList()
         ), subtaskId);
@@ -86,7 +86,7 @@ public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockRan
     }
 
     @Override
-    public void addSplitsBack(List<EthereumBlockRangeSplit> splits, int subtaskId) {
+    public void addSplitsBack(List<EthereumBlockSplit> splits, int subtaskId) {
 
     }
 

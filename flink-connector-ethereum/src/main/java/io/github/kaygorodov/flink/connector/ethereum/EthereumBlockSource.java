@@ -18,7 +18,7 @@ package io.github.kaygorodov.flink.connector.ethereum;
 import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumEnumeratorState;
 import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumEnumeratorStateSerializer;
 import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumSplitEnumerator;
-import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplit;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockSplit;
 import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplitReader;
 import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplitSerializer;
 import org.apache.flink.api.connector.source.Boundedness;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.util.function.Supplier;
 
-public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeSplit, EthereumEnumeratorState> {
+public class EthereumBlockSource implements Source<EthBlock, EthereumBlockSplit, EthereumEnumeratorState> {
     private static final Logger logger = LoggerFactory.getLogger(EthereumBlockSource.class);
     private final String ethNodeUrl;
     private final BigInteger initialBlockNumber;
@@ -65,20 +65,20 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
     }
 
     @Override
-    public SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> createEnumerator(SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext) throws Exception {
+    public SplitEnumerator<EthereumBlockSplit, EthereumEnumeratorState> createEnumerator(SplitEnumeratorContext<EthereumBlockSplit> enumContext) throws Exception {
         return new EthereumSplitEnumerator(enumContext, initialBlockNumber, ethNodeUrl, null);
     }
 
     @Override
-    public SplitEnumerator<EthereumBlockRangeSplit, EthereumEnumeratorState> restoreEnumerator(
-        SplitEnumeratorContext<EthereumBlockRangeSplit> enumContext,
+    public SplitEnumerator<EthereumBlockSplit, EthereumEnumeratorState> restoreEnumerator(
+        SplitEnumeratorContext<EthereumBlockSplit> enumContext,
         EthereumEnumeratorState checkpoint) throws Exception {
 
         return new EthereumSplitEnumerator(enumContext, initialBlockNumber, ethNodeUrl, checkpoint);
     }
 
     @Override
-    public SimpleVersionedSerializer<EthereumBlockRangeSplit> getSplitSerializer() {
+    public SimpleVersionedSerializer<EthereumBlockSplit> getSplitSerializer() {
         return new EthereumBlockRangeSplitSerializer();
     }
 
@@ -88,7 +88,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockRangeS
     }
 
     @Override
-    public SourceReader<EthBlock, EthereumBlockRangeSplit> createReader(SourceReaderContext readerContext) throws Exception {
+    public SourceReader<EthBlock, EthereumBlockSplit> createReader(SourceReaderContext readerContext) throws Exception {
 
         logger.info("Creating a reader from source impl");
         FutureCompletingBlockingQueue<RecordsWithSplitIds<EthereumBlockWithCheckInfo>>

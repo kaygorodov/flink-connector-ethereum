@@ -15,43 +15,51 @@
  */
 package io.github.kaygorodov.flink.connector.ethereum.split;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.connector.source.SourceSplit;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * Defines a number of blocks that belong to a given Split.
+ * A split of Ethereum blocks
  */
 @Internal
-public class EthereumBlockRangeSplit implements SourceSplit {
+public class EthereumBlockSplit implements SourceSplit {
 
-    public List<BigInteger> getBlockIds() {
+    /**
+     * Returns the block ids that constitute this split
+     */
+    public Set<BigInteger> getBlockIds() {
         return blockIds;
     }
 
-    private final List<BigInteger> blockIds;
+    private final Set<BigInteger> blockIds;
 
-    public EthereumBlockRangeSplit(List<BigInteger> blockIds) {
-        this.blockIds = blockIds;
+    public EthereumBlockSplit(List<BigInteger> blockIds) {
+        if (blockIds.isEmpty()) {
+            throw new IllegalArgumentException("blockIds must not be empty");
+        }
+        this.blockIds = new HashSet<>(blockIds);
     }
 
-    public EthereumBlockRangeSplit(String splitId) {
-        this(Arrays.stream(splitId.split(",")).map(BigInteger::new).collect(Collectors.toList()));
+    /**
+     * Creates a split from a comma-separated list of block ids
+     */
+    public EthereumBlockSplit(String splitId) {
+        this(Arrays.stream(splitId.split(",")).map(BigInteger::new).toList());
     }
 
     @Override
     public String splitId() {
-        return blockIds.stream().map(BigInteger::toString).collect(Collectors.joining(","));
+        return String.join(",", blockIds.stream().sorted().map(BigInteger::toString).toList());
     }
 
     @Override
     public String toString() {
-        return "EthereumBlockRangeSplit{" +
-            "blockIds=" + blockIds +
-            '}';
+        return "EthereumBlockSplit{blockIds=" + blockIds + "}";
     }
 }
