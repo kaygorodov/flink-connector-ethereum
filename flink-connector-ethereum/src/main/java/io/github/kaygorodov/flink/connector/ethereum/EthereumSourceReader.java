@@ -15,7 +15,7 @@
  */
 package io.github.kaygorodov.flink.connector.ethereum;
 
-import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplit;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockSplit;
 import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplitState;
 import java.util.Map;
 import org.apache.flink.annotation.Internal;
@@ -30,12 +30,12 @@ import io.github.kaygorodov.flink.connector.ethereum.model.EthBlock;
 
 @Internal
 public class EthereumSourceReader extends
-    SourceReaderBase<EthereumBlockWithCheckInfo, EthBlock, EthereumBlockRangeSplit, EthereumBlockRangeSplitState> {
+    SourceReaderBase<EthereumBlockWithCheckInfo, EthBlock, EthereumBlockSplit, EthereumBlockRangeSplitState> {
 
 
     public EthereumSourceReader(
         FutureCompletingBlockingQueue<RecordsWithSplitIds<EthereumBlockWithCheckInfo>> elementsQueue,
-        SingleThreadFetcherManager<EthereumBlockWithCheckInfo, EthereumBlockRangeSplit> splitFetcherManager,
+        SingleThreadFetcherManager<EthereumBlockWithCheckInfo, EthereumBlockSplit> splitFetcherManager,
         RecordEmitter<EthereumBlockWithCheckInfo, EthBlock, EthereumBlockRangeSplitState> recordEmitter,
         Configuration config, SourceReaderContext context) {
         super(elementsQueue, splitFetcherManager, recordEmitter, config, context);
@@ -47,12 +47,12 @@ public class EthereumSourceReader extends
     }
 
     @Override
-    protected EthereumBlockRangeSplitState initializedState(EthereumBlockRangeSplit split) {
+    protected EthereumBlockRangeSplitState initializedState(EthereumBlockSplit split) {
         return new EthereumBlockRangeSplitState();
     }
 
     @Override
-    protected EthereumBlockRangeSplit toSplitType(String splitId, EthereumBlockRangeSplitState splitState) {
-        return new EthereumBlockRangeSplit(splitId);
+    protected EthereumBlockSplit toSplitType(String splitId, EthereumBlockRangeSplitState splitState) {
+        return new EthereumBlockSplit(splitId);
     }
 }

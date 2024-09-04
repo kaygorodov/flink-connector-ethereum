@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 
 @Internal
-public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockWithCheckInfo, EthereumBlockRangeSplit> {
+public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockWithCheckInfo, EthereumBlockSplit> {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(EthereumBlockRangeSplitReader.class);
     private final static RecordsWithSplitIds<EthereumBlockWithCheckInfo> EMPTY_RECORDS_WITH_SPLIT_IDS = new EthereumBlocksWithRangeSplits(List.of(), null);
 
@@ -53,7 +53,7 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
         this(readerContext, new EthNetworkClient(url));
     }
 
-    private final Deque<EthereumBlockRangeSplit> splitsToProcess = new ArrayDeque<>();
+    private final Deque<EthereumBlockSplit> splitsToProcess = new ArrayDeque<>();
 
     private static class EthereumBlocksWithRangeSplits implements RecordsWithSplitIds<EthereumBlockWithCheckInfo> {
         private final String splitId;
@@ -121,11 +121,11 @@ public class EthereumBlockRangeSplitReader implements SplitReader<EthereumBlockW
     }
 
     @Override
-    public void handleSplitsChanges(SplitsChange<EthereumBlockRangeSplit> splitsChanges) {
+    public void handleSplitsChanges(SplitsChange<EthereumBlockSplit> splitsChanges) {
       logger.info("Received SplitChange: {}", splitsChanges.toString());
 
-        if(splitsChanges instanceof SplitsAddition<EthereumBlockRangeSplit> splitsAddition) {
-            for(EthereumBlockRangeSplit split: splitsAddition.splits()) {
+        if(splitsChanges instanceof SplitsAddition<EthereumBlockSplit> splitsAddition) {
+            for(EthereumBlockSplit split: splitsAddition.splits()) {
                 splitsToProcess.addLast(split);
             }
         } else {

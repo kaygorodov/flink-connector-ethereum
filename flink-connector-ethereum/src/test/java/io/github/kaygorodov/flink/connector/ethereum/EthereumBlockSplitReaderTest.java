@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import io.github.kaygorodov.flink.connector.ethereum.client.EthNetworkClient;
-import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplit;
+import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockSplit;
 import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockRangeSplitReader;
 import java.math.BigInteger;
 import java.util.List;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import io.github.kaygorodov.flink.connector.ethereum.model.EthBlock;
 
-class EthereumBlockRangeSplitReaderTest {
+class EthereumBlockSplitReaderTest {
 
   @Test
   void shouldReturnEmptyRecordResultOnFetchWhenNoSplitsAssigned() {
@@ -53,7 +53,7 @@ class EthereumBlockRangeSplitReaderTest {
     var blockNumberOne = BigInteger.valueOf(777);
     var blockNumberTwo = BigInteger.valueOf(778);
     reader.handleSplitsChanges(new SplitsAddition<>(List.of(
-        new EthereumBlockRangeSplit(List.of(blockNumberOne, blockNumberTwo))
+        new EthereumBlockSplit(List.of(blockNumberOne, blockNumberTwo))
     )));
 
     when(ethClient.getBlockByNumber(blockNumberOne)).thenReturn(createBlock(blockNumberOne));
