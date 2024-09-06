@@ -64,4 +64,18 @@ class EthereumBlockSplitTest {
     assertEquals(ethereumBlockSplit.toString(), "EthereumBlockSplit{blockIds=[777, 778]}");
   }
 
+  @Test
+  void shouldBeEqualIfBlockIdsAreSame() {
+    EthereumBlockSplit ethereumBlockSplitOne = new EthereumBlockSplit(List.of(BigInteger.valueOf(1), BigInteger.valueOf(2)));
+    EthereumBlockSplit ethereumBlockSplitTwo = new EthereumBlockSplit(List.of(BigInteger.valueOf(2), BigInteger.valueOf(1)));
+    assertEquals(ethereumBlockSplitOne, ethereumBlockSplitTwo);
+  }
+
+  @Test
+  void shouldNotBeEqualIfBlockIdsAreDifferent() {
+    EthereumBlockSplit ethereumBlockSplitOne = new EthereumBlockSplit(List.of(BigInteger.valueOf(1)));
+    EthereumBlockSplit ethereumBlockSplitTwo = new EthereumBlockSplit(List.of(BigInteger.valueOf(2), BigInteger.valueOf(1)));
+    assertNotEquals(ethereumBlockSplitOne, ethereumBlockSplitTwo);
+  }
+
 }

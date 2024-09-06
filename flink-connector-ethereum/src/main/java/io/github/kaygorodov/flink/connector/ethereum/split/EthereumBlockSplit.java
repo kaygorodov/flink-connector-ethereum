@@ -16,6 +16,7 @@
 package io.github.kaygorodov.flink.connector.ethereum.split;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.connector.source.SourceSplit;
@@ -61,5 +62,21 @@ public class EthereumBlockSplit implements SourceSplit {
     @Override
     public String toString() {
         return "EthereumBlockSplit{blockIds=" + blockIds + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof EthereumBlockSplit that)) {
+            return false;
+        }
+      return Objects.equals(blockIds, that.blockIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(blockIds);
     }
 }

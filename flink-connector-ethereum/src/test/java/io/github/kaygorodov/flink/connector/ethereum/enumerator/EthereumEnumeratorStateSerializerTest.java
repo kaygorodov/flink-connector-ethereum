@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.kaygorodov.flink.connector.ethereum;
+package io.github.kaygorodov.flink.connector.ethereum.enumerator;
 
-import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumEnumeratorState;
-import io.github.kaygorodov.flink.connector.ethereum.enumerator.EthereumEnumeratorStateSerializer;
 import java.io.IOException;
 import java.math.BigInteger;
 import org.apache.flink.core.io.VersionMismatchException;

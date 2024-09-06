@@ -33,7 +33,6 @@ import java.util.List;
 public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockSplit, EthereumEnumeratorState> {
     private static final Logger logger = LoggerFactory.getLogger(EthereumSplitEnumerator.class);
 
-    private final String ethNodeUrl;
     private final BigInteger initialBlockNumber;
     private BigInteger lastAssignedBlockNumber;
     private final SplitEnumeratorContext<EthereumBlockSplit> enumContext;
@@ -42,21 +41,29 @@ public class EthereumSplitEnumerator implements SplitEnumerator<EthereumBlockSpl
     private BigInteger latestBlockNumber;
 
     public EthereumSplitEnumerator(SplitEnumeratorContext<EthereumBlockSplit> enumContext,
-                                    BigInteger initialBlockNumber, String ethNodeUrl, EthereumEnumeratorState checkpoint) {
+                                   BigInteger initialBlockNumber,
+                                   String ethNodeUrl,
+                                   EthereumEnumeratorState checkpoint) {
+        this(enumContext, initialBlockNumber, new EthNetworkClient(ethNodeUrl), checkpoint);
+    }
+
+    public EthereumSplitEnumerator(SplitEnumeratorContext<EthereumBlockSplit> enumContext,
+                                   BigInteger initialBlockNumber,
+                                   EthNetworkClient ethNetworkClient,
+                                   EthereumEnumeratorState checkpoint) {
         this.enumContext = enumContext;
         this.initialBlockNumber = initialBlockNumber;
         if (checkpoint != null) {
             logger.info("Recovering EthereumSplitEnumerator from state {}", checkpoint);
             this.lastAssignedBlockNumber = checkpoint.getLastAssignedBlockNumber();
         }
-        this.ethNodeUrl = ethNodeUrl;
-        this.ethNetworkClient = new EthNetworkClient(ethNodeUrl);
+        this.ethNetworkClient = ethNetworkClient;
         latestBlockNumber = this.ethNetworkClient.getLatestBlockNumber();
     }
 
     @Override
     public void start() {
-        logger.info("Starting EthereumSourceEnumerator using Node URL: {}", ethNodeUrl);
+        logger.info("Starting EthereumSourceEnumerator using Ethe Node Client: ", ethNetworkClient);
         logger.info("Initial Block Number is {}", initialBlockNumber);
     }
 
