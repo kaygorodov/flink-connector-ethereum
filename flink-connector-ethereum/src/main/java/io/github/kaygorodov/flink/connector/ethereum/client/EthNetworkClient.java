@@ -50,4 +50,10 @@ public class EthNetworkClient {
     }
   }
 
+  @Override
+  public String toString() {
+    return "EthNetworkClient{" +
+        "web3=" + web3 +
+        '}';
+  }
 }

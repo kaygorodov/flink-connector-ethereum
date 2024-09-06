@@ -15,21 +15,23 @@
  */
 package io.github.kaygorodov.flink.connector.ethereum.enumerator;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.math.BigInteger;
-import org.apache.flink.annotation.Internal;
+import org.junit.jupiter.api.Test;
 
-@Internal
-public class EthereumEnumeratorState {
-  private final BigInteger lastAssignedBlockNumber;
+class EthereumEnumeratorStateTest {
 
-  public BigInteger getLastAssignedBlockNumber() {
-    return lastAssignedBlockNumber;
+  @Test
+  void shouldKeepAndReturnLastAssignedBlockNumber() {
+      EthereumEnumeratorState ethereumEnumeratorState = new EthereumEnumeratorState(BigInteger.valueOf(33));
+      assertEquals(BigInteger.valueOf(33), ethereumEnumeratorState.getLastAssignedBlockNumber());
   }
 
-  public EthereumEnumeratorState(BigInteger lastAssignedBlockNumber) {
-    if (lastAssignedBlockNumber == null) {
-      throw new IllegalArgumentException("lastAssignedBlockNumber cannot be null");
-    }
-    this.lastAssignedBlockNumber = lastAssignedBlockNumber;
+  @Test
+  void shouldNotAcceptNullAsLastAssignedBlockNumber() {
+    assertThrows(IllegalArgumentException.class,
+        () -> new EthereumEnumeratorState(null));
   }
+
 }
