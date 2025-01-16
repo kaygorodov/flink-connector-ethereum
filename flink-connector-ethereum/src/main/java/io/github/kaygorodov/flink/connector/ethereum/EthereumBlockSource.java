@@ -91,13 +91,9 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockSplit,
     public SourceReader<EthBlock, EthereumBlockSplit> createReader(SourceReaderContext readerContext) throws Exception {
 
         logger.info("Creating a reader from source impl");
-        FutureCompletingBlockingQueue<RecordsWithSplitIds<EthereumBlockWithCheckInfo>>
-            elementsQueue = new FutureCompletingBlockingQueue<>();
-
         Supplier<EthereumBlockRangeSplitReader> splitReaderSupplier = () -> new EthereumBlockRangeSplitReader(readerContext, ethNodeUrl);
 
         EthereumSplitFetcherManager ethereumSplitFetcherManager = new EthereumSplitFetcherManager(
-            elementsQueue,
             splitReaderSupplier::get
         );
 
@@ -106,7 +102,7 @@ public class EthereumBlockSource implements Source<EthBlock, EthereumBlockSplit,
         int parallelism = readerContext.currentParallelism();
         RateLimiter rateLimiter = rateLimiterStrategy.createRateLimiter(parallelism);
         return new RateLimitedSourceReader<>(
-            new EthereumSourceReader(elementsQueue, ethereumSplitFetcherManager, emitter, new Configuration(), readerContext),
+            new EthereumSourceReader(ethereumSplitFetcherManager, emitter, new Configuration(), readerContext),
             rateLimiter);
     }
 }

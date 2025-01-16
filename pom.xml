@@ -63,7 +63,7 @@
     </modules>
 
     <properties>
-        <flink.version>1.20.0</flink.version>
+        <flink.version>2.0-preview1</flink.version>
 
         <junit5.version>5.9.1</junit5.version>
         <assertj.version>3.23.1</assertj.version>
