@@ -16,20 +16,18 @@
 package io.github.kaygorodov.flink.connector.ethereum;
 
 import io.github.kaygorodov.flink.connector.ethereum.split.EthereumBlockSplit;
+import java.util.function.Supplier;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.fetcher.SingleThreadFetcherManager;
 import org.apache.flink.connector.base.source.reader.splitreader.SplitReader;
-import org.apache.flink.connector.base.source.reader.synchronization.FutureCompletingBlockingQueue;
-
-import java.util.function.Supplier;
 
 @Internal
-public class EthereumSplitFetcherManager extends SingleThreadFetcherManager<EthereumBlockWithCheckInfo, EthereumBlockSplit> {
+public class EthereumSplitFetcherManager extends
+    SingleThreadFetcherManager<EthereumBlockWithCheckInfo, EthereumBlockSplit> {
+
     public EthereumSplitFetcherManager(
-        FutureCompletingBlockingQueue<RecordsWithSplitIds<EthereumBlockWithCheckInfo>> elementsQueue,
         Supplier<SplitReader<EthereumBlockWithCheckInfo, EthereumBlockSplit>> splitReaderSupplier) {
-        super(elementsQueue, splitReaderSupplier, new Configuration());
+        super(splitReaderSupplier, new Configuration());
     }
 }

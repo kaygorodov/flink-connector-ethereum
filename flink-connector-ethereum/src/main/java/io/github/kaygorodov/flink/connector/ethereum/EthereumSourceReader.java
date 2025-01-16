@@ -25,6 +25,7 @@ import org.apache.flink.connector.base.source.reader.RecordEmitter;
 import org.apache.flink.connector.base.source.reader.RecordsWithSplitIds;
 import org.apache.flink.connector.base.source.reader.SourceReaderBase;
 import org.apache.flink.connector.base.source.reader.fetcher.SingleThreadFetcherManager;
+import org.apache.flink.connector.base.source.reader.fetcher.SplitFetcherManager;
 import org.apache.flink.connector.base.source.reader.synchronization.FutureCompletingBlockingQueue;
 import io.github.kaygorodov.flink.connector.ethereum.model.EthBlock;
 
@@ -34,11 +35,10 @@ public class EthereumSourceReader extends
 
 
     public EthereumSourceReader(
-        FutureCompletingBlockingQueue<RecordsWithSplitIds<EthereumBlockWithCheckInfo>> elementsQueue,
-        SingleThreadFetcherManager<EthereumBlockWithCheckInfo, EthereumBlockSplit> splitFetcherManager,
+        SplitFetcherManager<EthereumBlockWithCheckInfo, EthereumBlockSplit> splitFetcherManager,
         RecordEmitter<EthereumBlockWithCheckInfo, EthBlock, EthereumBlockRangeSplitState> recordEmitter,
         Configuration config, SourceReaderContext context) {
-        super(elementsQueue, splitFetcherManager, recordEmitter, config, context);
+        super(splitFetcherManager, recordEmitter, config, context);
     }
 
     @Override
