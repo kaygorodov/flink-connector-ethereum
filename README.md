@@ -4,7 +4,7 @@ Flink DataStream connector for any Ethereum-compatible network
 
 # Prerequisites
 
-The current version of the connector is built using Flink 1.20 and JDK 17
+The current version of the connector is built using Flink 2.0 (preview1) and JDK 17
 
 # Usage
 
