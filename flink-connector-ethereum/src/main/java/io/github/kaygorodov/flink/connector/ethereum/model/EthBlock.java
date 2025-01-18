@@ -39,7 +39,6 @@ public class EthBlock {
   private String miner;
   private String mixHash;
   private BigInteger difficulty;
-  private BigInteger totalDifficulty;
   private String extraData;
   private BigInteger size;
   private BigInteger gasLimit;
@@ -73,7 +72,6 @@ public class EthBlock {
     this.miner = rawBlock.getMiner();
     this.mixHash = rawBlock.getMixHash();
     this.difficulty = rawBlock.getDifficulty();
-    this.totalDifficulty = rawBlock.getTotalDifficulty();
     this.extraData = rawBlock.getExtraData();
     this.size = rawBlock.getSize();
     this.gasLimit = rawBlock.getGasLimit();
@@ -204,14 +202,6 @@ public class EthBlock {
     this.difficulty = difficulty;
   }
 
-  public BigInteger getTotalDifficulty() {
-    return totalDifficulty;
-  }
-
-  public void setTotalDifficulty(BigInteger totalDifficulty) {
-    this.totalDifficulty = totalDifficulty;
-  }
-
   public String getExtraData() {
     return extraData;
   }
@@ -317,7 +307,6 @@ public class EthBlock {
         "  miner='" + miner + '\'' + ",\n" +
         "  mixHash='" + mixHash + '\'' + ",\n" +
         "  difficulty=" + difficulty + ",\n" +
-        "  totalDifficulty=" + totalDifficulty + ",\n" +
         "  extraData='" + extraData + '\'' + ",\n" +
         "  size=" + size + ",\n" +
         "  gasLimit=" + gasLimit + ",\n" +
